@@ -13,6 +13,8 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.cloud.CloudItem;
 import com.amap.api.services.cloud.CloudItemDetail;
@@ -154,6 +156,22 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
     //返回Cloud搜索异步处理的结果
     @Override
     public void onCloudSearched(CloudResult cloudResult, int i) {
+        if(i == 0){
+            if(cloudResult == null){
+                ArrayList<CloudItem> items = cloudResult.getClouds();
+                for (int j = 0; j < items.size(); j++){
+                    CloudItem item = items.get(j);
+                    LatLng latLng = new LatLng(item.getLatLonPoint().getLatitude(),item.getLatLonPoint().getLongitude());
+                    MarkerOptions option = new MarkerOptions();
+                    option.position(latLng);
+                    option.title(item.getTitle());
+                    aMap.addMarker(option);
+                }
+            }
+        }else {
+            Toast.makeText(myLocation.this, "显示错误", Toast.LENGTH_SHORT).show();
+
+        }
 
     }
 
