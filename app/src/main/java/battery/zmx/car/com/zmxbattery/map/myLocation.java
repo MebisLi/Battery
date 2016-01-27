@@ -3,6 +3,9 @@ package battery.zmx.car.com.zmxbattery.map;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -14,19 +17,22 @@ import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.cloud.CloudItem;
 import com.amap.api.services.cloud.CloudItemDetail;
 import com.amap.api.services.cloud.CloudResult;
 import com.amap.api.services.cloud.CloudSearch;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 
 import java.util.ArrayList;
 
 import battery.zmx.car.com.zmxbattery.R;
 
-public class myLocation extends AppCompatActivity implements LocationSource , AMapLocationListener , CloudSearch.OnCloudSearchListener {
+public class myLocation extends AppCompatActivity implements LocationSource , AMapLocationListener , CloudSearch.OnCloudSearchListener ,View.OnClickListener
+,AMap.OnMarkerClickListener{
 
     private MapView mapView;
     private AMap aMap;
@@ -52,12 +58,19 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         mapView.onCreate(savedInstanceState);
         init();
 
+        Button button = (Button) findViewById(R.id.button_2);
+        button.setOnClickListener(this);
+
+
     }
 
     private void init() {
         if (aMap == null){
             aMap = mapView.getMap();
             setUpMap();
+
+            mCloudSearch = new CloudSearch(this.getApplicationContext());
+            mCloudSearch.setOnCloudSearchListener(this);
         }
     }
 
@@ -145,7 +158,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         if (mListener != null && aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 mListener.onLocationChanged(aMapLocation);//系统显示小蓝点
-                Toast.makeText(myLocation.this, "定位成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(myLocation.this, "定位成功", Toast.LENGTH_SHORT).show();
             } else {
                 int data = aMapLocation.getErrorCode();
                 Toast.makeText(myLocation.this, data, Toast.LENGTH_SHORT).show();
@@ -153,11 +166,27 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         }
     }
 
+
+    public void searchByBound(View view) {
+        Log.d("button","searchByBound");
+        items.clear();
+        LatLonPoint centerPoint = new LatLonPoint(mLocation.getLatitude(),mLocation.getLongitude());
+        CloudSearch.SearchBound bound = new CloudSearch.SearchBound(centerPoint,5000);
+        try {
+            CloudSearch.Query query = new CloudSearch.Query(tableId,mKeyWord, bound);
+            mCloudSearch.searchCloudAsyn(query);
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     //返回Cloud搜索异步处理的结果
     @Override
     public void onCloudSearched(CloudResult cloudResult, int i) {
+        Log.d("button","返回Cloud搜索异步处理的结果  i:"+i);
         if(i == 0){
-            if(cloudResult == null){
+            if(cloudResult != null){
                 ArrayList<CloudItem> items = cloudResult.getClouds();
                 for (int j = 0; j < items.size(); j++){
                     CloudItem item = items.get(j);
@@ -167,6 +196,11 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
                     option.title(item.getTitle());
                     aMap.addMarker(option);
                 }
+                Log.d("button"," Cloud success");
+                Toast.makeText(myLocation.this,"成功",Toast.LENGTH_SHORT).show();
+            }else{
+                Log.d("button","cloudresult == null");
+                Toast.makeText(myLocation.this,"cloudResult null",Toast.LENGTH_SHORT).show();
             }
         }else {
             Toast.makeText(myLocation.this, "显示错误", Toast.LENGTH_SHORT).show();
@@ -179,5 +213,18 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
     @Override
     public void onCloudItemDetailSearched(CloudItemDetail cloudItemDetail, int i) {
 
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        Toast.makeText(myLocation.this, "点击button", Toast.LENGTH_SHORT).show();
+        Log.d("button","onclick");
+        searchByBound(v);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
     }
 }
