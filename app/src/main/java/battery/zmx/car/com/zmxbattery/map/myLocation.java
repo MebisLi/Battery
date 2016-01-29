@@ -58,6 +58,8 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         mapView.onCreate(savedInstanceState);
         init();
 
+
+
         Button button = (Button) findViewById(R.id.button_2);
         button.setOnClickListener(this);
 
@@ -85,6 +87,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         super.onPause();
         mapView.onPause();
         deactivate();
+        Log.d("button","onPause");
     }
 
     @Override
@@ -101,14 +104,15 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
 
     //定位样式
     private void setUpMap() {
+        Log.d("button","setUpMap");
         // 自定义系统定位小蓝点
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         // 设置小蓝点的图标
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_marker));
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_map));
         // 设置圆形的边框颜色
         myLocationStyle.strokeColor(Color.BLACK);
+        myLocationStyle.strokeWidth(50000);
         myLocationStyle.radiusFillColor(Color.argb(100, 0, 0, 180));// 设置圆形的填充颜色
-        // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
         myLocationStyle.strokeWidth(1.0f);// 设置圆形的边框粗细
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.setLocationSource(this);// 设置定位监听
@@ -120,6 +124,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
     //LocationSourced定位激活
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
+        Log.d("button","定位激活");
         mListener = onLocationChangedListener;
         if(mLocationClient == null){
             mLocationClient = new AMapLocationClient(this);
@@ -153,17 +158,17 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
     //AMapLocationListener定位成功后回调函数
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-
+        Log.d("button","定位成功后回调");
         mLocation = aMapLocation;
         if (mListener != null && aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 mListener.onLocationChanged(aMapLocation);//系统显示小蓝点
-//                Toast.makeText(myLocation.this, "定位成功", Toast.LENGTH_SHORT).show();
             } else {
                 int data = aMapLocation.getErrorCode();
                 Toast.makeText(myLocation.this, data, Toast.LENGTH_SHORT).show();
             }
         }
+        searchByBound(findViewById(R.id.map));
     }
 
 
@@ -198,9 +203,6 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
                 }
                 Log.d("button"," Cloud success");
                 Toast.makeText(myLocation.this,"成功",Toast.LENGTH_SHORT).show();
-            }else{
-                Log.d("button","cloudresult == null");
-                Toast.makeText(myLocation.this,"cloudResult null",Toast.LENGTH_SHORT).show();
             }
         }else {
             Toast.makeText(myLocation.this, "显示错误", Toast.LENGTH_SHORT).show();
@@ -218,9 +220,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(myLocation.this, "点击button", Toast.LENGTH_SHORT).show();
-        Log.d("button","onclick");
-        searchByBound(v);
+
     }
 
     @Override
