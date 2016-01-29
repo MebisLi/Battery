@@ -1,5 +1,6 @@
 package battery.zmx.car.com.zmxbattery.map;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import com.amap.api.services.core.LatLonPoint;
 
 import java.util.ArrayList;
 
+import battery.zmx.car.com.zmxbattery.ListView.listView;
 import battery.zmx.car.com.zmxbattery.R;
 
 public class myLocation extends AppCompatActivity implements LocationSource , AMapLocationListener , CloudSearch.OnCloudSearchListener ,View.OnClickListener
@@ -220,6 +222,8 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
 
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(myLocation.this , listView.class);
+        startActivityForResult(intent , 1);
 
     }
 
