@@ -126,7 +126,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
     //LocationSourced定位激活
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
-        Log.d("button","定位激活");
+        Log.d("button","activate");
         mListener = onLocationChangedListener;
         if(mLocationClient == null){
             mLocationClient = new AMapLocationClient(this);
@@ -171,6 +171,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
             }
         }
         searchByBound(findViewById(R.id.map));
+        deactivate();
     }
 
 
@@ -194,7 +195,9 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         Log.d("button","返回Cloud搜索异步处理的结果  i:"+i);
         if(i == 0){
             if(cloudResult != null){
+                Log.i("items" , cloudResult.toString());
                 ArrayList<CloudItem> items = cloudResult.getClouds();
+                Log.i("items" , String.valueOf(items.size()));
                 for (int j = 0; j < items.size(); j++){
                     CloudItem item = items.get(j);
                     LatLng latLng = new LatLng(item.getLatLonPoint().getLatitude(),item.getLatLonPoint().getLongitude());
