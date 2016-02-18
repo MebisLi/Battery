@@ -1,6 +1,7 @@
-package battery.zmx.car.com.zmxbattery.ListView;
+package battery.zmx.car.com.zmxbattery.navigation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import battery.zmx.car.com.zmxbattery.R;
+import battery.zmx.car.com.zmxbattery.map.LocationActivity;
 
-public class listView extends AppCompatActivity implements CloudSearch.OnCloudSearchListener{
+public class ListActivity extends AppCompatActivity implements CloudSearch.OnCloudSearchListener{
 
 
     private AMapLocationClientOption mLocationOption;
@@ -45,6 +49,9 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
 
     private ListView listView;
     private List<Map<String , Object>> data;
+
+    private double Lat;
+    private double Lot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +126,7 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
         items.clear();
         LatLonPoint centerPoint = new LatLonPoint(mLocation.getLatitude(),mLocation.getLongitude());
         Log.i("items" , centerPoint.toString());
-        CloudSearch.SearchBound bound = new CloudSearch.SearchBound(centerPoint,5000);
+        CloudSearch.SearchBound bound = new CloudSearch.SearchBound(centerPoint,500000000);
         try {
             CloudSearch.Query query = new CloudSearch.Query(tableId,mKeyWord, bound);
             mCloudSearch.searchCloudAsyn(query);
@@ -132,7 +139,7 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
     //
     @Override
     public void onCloudSearched(CloudResult cloudResult, int i) {
-        Log.d("List" , "onCloudSearched");
+        Log.d("List", "onCloudSearched");
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> map;
         if(i == 0){
@@ -143,7 +150,7 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
                 dataList(items);
             }
         }else {
-            Toast.makeText(listView.this, "显示错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ListActivity.this, "显示错误", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -157,9 +164,12 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
 
     static class ViewHolder
     {
+        public LinearLayout listLinear;
         public TextView title;
         public TextView snippet;
         public TextView distance;
+        public Button bt1;
+        public Button bt2;
     }
 
     public void dataList(ArrayList<CloudItem> items){
@@ -180,13 +190,13 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
         for(int i=0;i< items.size();i++)
         {
             CloudItem item = items.get(i);
-            Log.i("items", "getData  " + String.valueOf(item.getTitle()) + i);
-            Log.i("items", "getData  " + String.valueOf(item.getDistance()));
 
             map = new HashMap<String, Object>();
             map.put("title", item.getTitle());
             map.put("snippet", item.getSnippet());
-            map.put("distance" , item.getDistance() + "km   ");
+            map.put("distance" , item.getDistance()/1000.0f + "km ");
+            map.put("lat" , item.getLatLonPoint().getLatitude());
+            map.put("lot" , item.getLatLonPoint().getLongitude());
             list.add(map);
         }
         return list;
@@ -215,7 +225,7 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             Log.d("List" , "getView");
             ViewHolder holder = null;
             //如果缓存convertView为空，则需要创建View
@@ -224,9 +234,12 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
                 holder = new ViewHolder();
                 //根据自定义的Item布局加载布局
                 convertView = mInflater.inflate(R.layout.content_list_view, null);
-                holder.title = (TextView)convertView.findViewById(R.id.Title);
-                holder.snippet = (TextView)convertView.findViewById(R.id.Snippet);
-                holder.distance = (TextView)convertView.findViewById(R.id.Distance);
+                holder.title = (TextView)convertView.findViewById(R.id.title);
+                holder.snippet = (TextView)convertView.findViewById(R.id.snippet);
+                holder.distance = (TextView)convertView.findViewById(R.id.distance);
+                holder.listLinear = (LinearLayout) convertView.findViewById(R.id.list_linear);
+                holder.bt1 = (Button)convertView.findViewById(R.id.bt1);
+                holder.bt2 = (Button)convertView.findViewById(R.id.bt2);
                 //将设置好的布局保存到缓存中，并将其设置在Tag里，以便后面方便取出Tag
                 convertView.setTag(holder);
             }else
@@ -236,6 +249,35 @@ public class listView extends AppCompatActivity implements CloudSearch.OnCloudSe
             holder.title.setText((String)data.get(position).get("title"));
             holder.snippet.setText((String) data.get(position).get("snippet"));
             holder.distance.setText((String) data.get(position).get("distance"));
+            holder.listLinear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ListActivity.this, LocationActivity.class);
+                    startActivityForResult(intent, 1);
+                }
+            });
+            holder.bt1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Lat = (double) data.get(position).get("lat");
+                    Lot = (double) data.get(position).get("lot");
+                    Log.e("List" ,"定位" + String.valueOf(mLocation.getLatitude()));
+                    Log.e("List", String.valueOf(mLocation.getLongitude()));
+
+                    Log.e("List", "地点" + String.valueOf(Lat));
+                    Log.e("List", String.valueOf(Lot));
+                    Intent intent = new Intent("android.intent.action.VIEW",
+                            android.net.Uri.parse("androidamap://navi?sourceApplication=appname&lat=" + Lat +"&lon=" + Lot +"&dev=1&style=2"));
+                    intent.setPackage("com.autonavi.minimap");
+                    startActivity(intent);
+                }
+            });
+            holder.bt2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
 
             return convertView;
         }

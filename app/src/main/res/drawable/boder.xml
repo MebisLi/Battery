@@ -7,7 +7,7 @@
     //描边
     <stroke
         android:width="5dp"
-        android:color="#f9faf9" />
+        android:color="#fffafa" />
 
     //圆角
     <corners

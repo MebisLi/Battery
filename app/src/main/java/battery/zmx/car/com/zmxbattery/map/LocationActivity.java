@@ -30,10 +30,10 @@ import com.amap.api.services.core.LatLonPoint;
 
 import java.util.ArrayList;
 
-import battery.zmx.car.com.zmxbattery.ListView.listView;
+import battery.zmx.car.com.zmxbattery.navigation.ListActivity;
 import battery.zmx.car.com.zmxbattery.R;
 
-public class myLocation extends AppCompatActivity implements LocationSource , AMapLocationListener , CloudSearch.OnCloudSearchListener ,View.OnClickListener
+public class LocationActivity extends AppCompatActivity implements LocationSource , AMapLocationListener , CloudSearch.OnCloudSearchListener ,View.OnClickListener
 ,AMap.OnMarkerClickListener{
 
     private MapView mapView;
@@ -167,7 +167,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
                 mListener.onLocationChanged(aMapLocation);//系统显示小蓝点
             } else {
                 int data = aMapLocation.getErrorCode();
-                Toast.makeText(myLocation.this, data, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LocationActivity.this, data, Toast.LENGTH_SHORT).show();
             }
         }
         searchByBound(findViewById(R.id.map));
@@ -179,7 +179,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
         Log.d("button","searchByBound");
         items.clear();
         LatLonPoint centerPoint = new LatLonPoint(mLocation.getLatitude(),mLocation.getLongitude());
-        CloudSearch.SearchBound bound = new CloudSearch.SearchBound(centerPoint,5000);
+        CloudSearch.SearchBound bound = new CloudSearch.SearchBound(centerPoint,5000000);
         try {
             CloudSearch.Query query = new CloudSearch.Query(tableId,mKeyWord, bound);
             mCloudSearch.searchCloudAsyn(query);
@@ -207,10 +207,10 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
                     aMap.addMarker(option);
                 }
                 Log.d("button"," Cloud success");
-                Toast.makeText(myLocation.this,"成功",Toast.LENGTH_SHORT).show();
+                Toast.makeText(LocationActivity.this,"成功",Toast.LENGTH_SHORT).show();
             }
         }else {
-            Toast.makeText(myLocation.this, "显示错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LocationActivity.this, "显示错误", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -225,7 +225,7 @@ public class myLocation extends AppCompatActivity implements LocationSource , AM
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(myLocation.this , listView.class);
+        Intent intent = new Intent(LocationActivity.this , ListActivity.class);
         startActivityForResult(intent , 1);
 
     }

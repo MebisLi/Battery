@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/colorGray"
+    android:id="@+id/list_linear"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
+    android:layout_height="fill_parent">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -15,25 +13,35 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/boder">
 
-        <TextView
-            android:id="@+id/Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"/>
+        //第一行
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        //第二行
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal"
-            android:layout_weight="4">
+            android:layout_weight="5">
 
             <TextView
-                android:id="@+id/Snippet"
+                android:id="@+id/snippet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="11sp"
                 android:maxEms="10"
                 android:layout_weight="3"/>
+
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -42,32 +50,43 @@
                 android:src="@drawable/listmark"/>
 
             <TextView
-                android:id="@+id/Distance"
+                android:id="@+id/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_weight="1"/>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dip"
+            android:background="#e4e1e1" />
+
+        //第三行
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/bt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="导航"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:focusable="false"/>
 
             <Button
+                android:id="@+id/bt2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="预约"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:focusable="false"/>
         </LinearLayout>
-
 
     </LinearLayout>
 
 </LinearLayout>
+

@@ -27,7 +27,7 @@
             android:value="40c4e7e2a097914a13a868723d6ed8a6" />
 
         <activity
-            android:name=".map.basicMap"
+            android:name=".map.BasicMapActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -37,11 +37,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".map.myLocation"
+            android:name=".map.LocationActivity"
             android:label="@string/title_activity_my_location"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ListView.listView"
+            android:name=".navigation.ListActivity"
             android:label="@string/title_activity_list_view"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

@@ -11,7 +11,7 @@ import com.amap.api.maps2d.MapView;
 
 import battery.zmx.car.com.zmxbattery.R;
 
-public class basicMap extends AppCompatActivity {
+public class BasicMapActivity extends AppCompatActivity {
 
     private MapView mapView;
     private AMap aMap;
@@ -31,7 +31,7 @@ public class basicMap extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(basicMap.this , myLocation.class);
+                Intent intent = new Intent(BasicMapActivity.this , LocationActivity.class);
                 startActivityForResult(intent , 1);
             }
         });
